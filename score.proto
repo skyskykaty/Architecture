@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+service ScoreService {
+    rpc GetScore(ScoreRequest) returns (ScoreResponse);
+}
+
+message ScoreRequest {
+    string username = 1;
+}
+
+message ScoreResponse {
+    int32 score = 1;
+}
+
