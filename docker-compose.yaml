@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  auth:
+    build:
+      context: ./auth
+    ports:
+      - "5002:5002"
+    container_name: auth_service
+
+  score:
+    build:
+      context: ./score
+    ports:
+      - "5001:5001"
+    container_name: score_service
+
+  composition:
+    build:
+      context: ./composition
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "5000"  # NGINX будет перенаправлять запросы на эти порты, которые прописаны в .conf
+    environment:
+      - SCORE_THRESHOLD=5.0
+    depends_on:
+      - auth
+      - score
+
+  # Балансировщик собственной персоной
+  nginx:
+    image: nginx:latest
+    container_name: nginx_load_balancer
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80"  # Основной порт для входящего трафика
+    depends_on:
+      - composition

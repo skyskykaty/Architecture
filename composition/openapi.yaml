@@ -1,0 +1,101 @@
+openapi: 3.0.0
+info:
+  title: User Authentication and Score API
+  description: API для аутентификации пользователей на основе их оценки и пароля
+  version: 1.0.0
+paths:
+  /composition:
+    post:
+      summary: Аутентификация пользователя по его оценке и паролю
+      description: Проверяет оценку пользователя, если она выше порога, выполняется аутентификация с помощью пароля.
+      operationId: authenticateUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: Имя пользователя для аутентификации
+                  example: "john_doe"
+                password:
+                  type: string
+                  description: Пароль пользователя для аутентификации
+                  example: "password123"
+              required:
+                - username
+                - password
+      responses:
+        '200':
+          description: Успешный ответ с результатом аутентификации
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth:
+                    type: boolean
+                    description: Статус аутентификации
+                    example: true
+                  message:
+                    type: string
+                    description: Сообщение о результате аутентификации
+                    example: "Аутентификация успешна."
+        '400':
+          description: Некорректный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth:
+                    type: boolean
+                    description: Статус аутентификации
+                    example: false
+                  message:
+                    type: string
+                    description: Сообщение об ошибке
+                    example: "Аутентификация запрещена."
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  auth:
+                    type: boolean
+                    description: Статус аутентификации
+                    example: false
+                  message:
+                    type: string
+                    description: Сообщение об ошибке
+                    example: "Ошибка при обработке запроса."
+
+components:
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        auth:
+          type: boolean
+    ScoreRequest:
+      type: object
+      properties:
+        username:
+          type: string
+    ScoreResponse:
+      type: object
+      properties:
+        score:
+          type: number
+          format: float
