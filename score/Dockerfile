@@ -4,6 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install grpcio grpcio-tools
-
 CMD ["python", "score.py"]
